@@ -14,15 +14,16 @@ RUN curl -sS https://getcomposer.org/installer | php \
 
 RUN composer install --no-dev --optimize-autoloader
 
+# Enable rewrite
 RUN a2enmod rewrite
 
+# Set Laravel public folder
 RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf
 
-# ✅ IMPORTANT FIX FOR RAILWAY
-ENV PORT=8080
-EXPOSE 8080
+# ✅ FIX: DO NOT TOUCH Apache PORT FILES
+# Just expose correct port
+EXPOSE 80
 
-RUN sed -i 's/80/8080/g' /etc/apache2/ports.conf /etc/apache2/sites-available/000-default.conf
-
+# Permissions
 RUN chown -R www-data:www-data /var/www/html
 RUN chmod -R 775 storage bootstrap/cache
