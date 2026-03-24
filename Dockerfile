@@ -17,13 +17,13 @@ RUN composer install --no-dev --optimize-autoloader
 # Enable rewrite
 RUN a2enmod rewrite
 
+# ✅ FIX MPM ERROR (IMPORTANT)
+RUN a2dismod mpm_event && a2enmod mpm_prefork
+
 # Set Laravel public folder
 RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf
 
-# ✅ FIX: DO NOT TOUCH Apache PORT FILES
-# Just expose correct port
 EXPOSE 80
 
-# Permissions
 RUN chown -R www-data:www-data /var/www/html
 RUN chmod -R 775 storage bootstrap/cache
