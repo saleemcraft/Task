@@ -26,48 +26,36 @@ class AuthController extends Controller
             'password'=>'required|min:6',
         ]);
 
-        $data = $request->all();
-        $createUser = $this->create($data);
-        return redirect('login')->withSuccess('You are Registered Successfully...');
-        }
+        User::create([
+            'name'=> $request->name,
+            'email'=> $request->email,
+            'password'=> Hash::make($request->password)
+        ]);
 
-        public function create(array $data)
-{
-        return User::create([
-            'name'=> $data['name'],
-            'email'=> $data['email'],
-            'password'=> Hash::make($data['password'])
-  ]);
+        return redirect()->route('login')->with('success', 'You are Registered Successfully!');
+    }
 
-        }
-
-public function postLogin(Request $request){
+    public function postLogin(Request $request){
         $request->validate([
             'email'=>'required|email',
             'password'=>'required',
         ]);
 
-        $checkLoginCredentials=$request->only('email','password');
-        if(Auth::attempt($checkLoginCredentials)){
-            return redirect()->route ('products.index')->withsuccess('You are Successfully Logged in...');
+        if(Auth::attempt($request->only('email','password'))){
+            return redirect()->route('products.index') // ✅ Use route name
+                         ->with('success','Successfully Logged in!');
         }
-        return redirect ('login')->withsuccess('You are Login Credentials are Incorrect...');
-}
 
-public function logout(){
-        
-        Session::flush();
-        Auth::logout();    
-        return redirect("login");
-}
-
-
-
-public function dashboard(){
-    if(Auth::check()){
-        return view ('dashboard');
+        return redirect()->route('login')->with('error','Login Credentials are Incorrect!');
     }
-    return redirect ('login')->withsuccess('Please Login to Access the Dashboard Page...');
-}
 
+    public function logout(){
+        Auth::logout();    
+        Session::flush();
+        return redirect()->route('login')->with('success','Logged out successfully!');
+    }
+
+    public function dashboard(){
+        return redirect()->route('products.index'); // redirect dashboard to products
+    }
 }
