@@ -12,7 +12,7 @@
         </nav>
 
         <div class="col-md-6"></div>
-        <form action="/products/update/{{$product->id}}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('products.update', $product->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
             <div class="row mb-3">

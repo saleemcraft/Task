@@ -4,7 +4,7 @@
 <div class="row">
         <div class="d-flex justify-content-between">
           <h5><i class="bi bi-journal-richtext"></i>Product Details</h5>
-          <a href="/products/create" class="btn btn-primary"
+          <a href="{{ route('products.create') }}" class="btn btn-primary"
             ><i class="bi bi-plus-circle"></i>New Product</a
           >
         </div>
@@ -34,19 +34,23 @@
                     alt="Product"
                   />
                 </td>
-                <td><a href="products/show/{{$product->id}}">{{$product->name}}</a></td>
+                <td><a href="{{ route('products.show', $product->id) }}">{{$product->name}}</a></td>
                 <td>{{$product->mrp}}</td>
                 <td>{{$product->price}}</td>
                 <td>
-                  <a href="products/edit/{{$product->id}}" class="btn btn-dark btn-sm">
+                  <a href="{{ route('products.edit', $product->id) }}" class="btn btn-dark btn-sm">
                     <i class="bi bi-pencil-square"></i
                   ></a>
-                  <a href="products/delete/{{$product->id}}" onclick="return confirm('Are You Sure Want to Delete?')" 
-                  class="btn btn-danger btn-sm"
-                    ><i class="bi bi-trash"></i
-                  ></a>
-                </td>
-              </tr>
+                  <form action="{{ route('products.destroy', $product->id) }}" method="POST" style="display:inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" onclick="return confirm('Are You Sure Want to Delete?')" 
+                                        class="btn btn-danger btn-sm">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
               @endforeach
             </tbody>
           </table>

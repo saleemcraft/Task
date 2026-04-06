@@ -11,7 +11,7 @@
             </ol>
         </nav>
         <div class="col-md-6"></div>
-        <form action="/products/store" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="row mb-3">
                 <div class="col-md-6">
