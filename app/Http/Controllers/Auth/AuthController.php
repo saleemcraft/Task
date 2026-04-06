@@ -19,35 +19,23 @@ class AuthController extends Controller
         return view("auth.registration");
     }
 
-    public function postRegistration(Request $request){
-        $request->validate([
-            'name'=>'required',
-            'email'=>'required|email|unique:users',
-            'password'=>'required|min:6',
-        ]);
-
-        User::create([
-            'name'=> $request->name,
-            'email'=> $request->email,
-            'password'=> Hash::make($request->password)
-        ]);
-
-        return redirect()->route('login')->with('success', 'You are Registered Successfully!');
-    }
+    
 
     public function postLogin(Request $request){
-        $request->validate([
-            'email'=>'required|email',
-            'password'=>'required',
-        ]);
+    $request->validate([
+        'email'=>'required|email',
+        'password'=>'required|min:6'
+    ]);
 
-        if(Auth::attempt($request->only('email','password'))){
-            return redirect()->route('products.index') // ✅ Use route name
-                         ->with('success','Successfully Logged in!');
-        }
+    $credentials = $request->only('email','password');
 
-        return redirect()->route('login')->with('error','Login Credentials are Incorrect!');
+    if(Auth::attempt($credentials)){
+        // Redirect to product index page
+        return redirect()->route('products.index'); 
+    } else {
+        return back()->with('error','Login details are not valid');
     }
+}
 
     public function logout(){
         Auth::logout();    
