@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Product;
 use Illuminate\Support\Facades\Redirect;
 
-class Productcontroller extends Controller
+class ProductController extends Controller
 {
     public function index(){
         $products=Product::latest()->paginate(5);
@@ -40,23 +40,23 @@ class Productcontroller extends Controller
         ]);
         $data['image'] = $imageName;
 
-        product::create($data);
-        return Redirect('/')
+        Product::create($data);
+        return Redirect('products')
         ->withsuccess('product added successfully');
 
     }
 
     public function show($id){
-        $product=product::where('id',$id)->first();
+        $product=Product::where('id',$id)->first();
         return view('products.show', ['product'=>$product]);
     }
 
     public function edit($id){
-        $product=product::where('id',$id)->first();
+        $product=Product::where('id',$id)->first();
         return view('products.edit', ['product'=>$product]);
     }
 
-    public function update(request $request,$id){
+    public function update(Request $request,$id){
         $request->validate([
         'name'=>'required',
         'description'=>'required',
@@ -64,7 +64,7 @@ class Productcontroller extends Controller
         'price'=>'required|numeric',
         'image'=>'nullable'
       ]);
-        $product=product::findOrFail($id);
+        $product=Product::findOrFail($id);
         if($request->hasFile('image')){
       $imageName=time().".".$request->image->extension();
       $request->image->move(public_path('products'),$imageName);
@@ -78,12 +78,12 @@ class Productcontroller extends Controller
         $product->description=$request->description;
         
         $product->save();
-        return Redirect('/')
+        return Redirect('products')
         ->withsuccess('product updated successfully');
          }
     
     public function destroy($id){
-     $product=product::where('id',$id)->first();
+     $product=Product::where('id',$id)->first();
      $product->delete();
      return back()->withsuccess('product Details Deleted Successfully...!');  
     }
