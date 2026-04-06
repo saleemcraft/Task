@@ -21,39 +21,36 @@ class AuthController extends Controller
 
     
 
-    public function postLogin(Request $request){
-    $request->validate([
-        'email' => 'required|email',
-        'password' => 'required'
-    ]);
-
-    if(Auth::attempt($request->only('email','password'))){
-        // Redirect to products.index instead of dashboard
-        return redirect()->route('products.index');
-    }
-
-    return back()->withErrors(['email'=>'Invalid credentials']);
-}
-
-
-
-
-public function postRegistration(Request $request){
+    public function postRegistration(Request $request){
     $request->validate([
         'name'=>'required',
-        'email'=>'required|email|unique:users,email',
-        'password'=>'required|min:6'
+        'email'=>'required|email|unique:users',
+        'password'=>'required|min:6',
     ]);
 
-    $user = User::create([
-        'name'=>$request->name,
-        'email'=>$request->email,
-        'password'=>Hash::make($request->password),
+    User::create([
+        'name'=> $request->name,
+        'email'=> $request->email,
+        'password'=> Hash::make($request->password)
     ]);
 
-    Auth::login($user);
-    // Redirect to products.index after registration
-    return redirect()->route('products.index');
+    // Redirect to the correct products list route
+    return redirect()->route('products.index')->with('success','You are Registered Successfully...');
+}
+
+public function postLogin(Request $request){
+    $request->validate([
+        'email'=>'required|email',
+        'password'=>'required',
+    ]);
+
+    $credentials = $request->only('email','password');
+    if(Auth::attempt($credentials)){
+        // Redirect to products list
+        return redirect()->route('products.index')->with('success','You are Successfully Logged in...');
+    }
+
+    return redirect()->route('login')->with('error','Your Login Credentials are Incorrect...');
 }
 
     public function logout(){
